@@ -1,49 +1,72 @@
+ # 📊 Student Score Analyzer
 
-import numpy as np
+This project is part of the **MINDS INVASION AI Internship – Assignment 01**.
 
-# Store student marks
-marks = [72, 85, 90, 45, 63, 78, 91, 56, 88, 67]
+## 📌 Project Overview
 
-# Function to assign grades
-def grade(score):
-    if score >= 85:
-        return "A"
-    elif score >= 70:
-        return "B"
-    elif score >= 50:
-        return "C"
-    else:
-        return "F"
+The Student Score Analyzer is a Python program that takes student marks as user input, assigns grades, and performs statistical analysis using **NumPy**. It demonstrates Python fundamentals along with basic data analysis techniques.
 
-print("Student Grades")
-for i, score in enumerate(marks, start=1):
-    print(f"Student {i}: {score} -> {grade(score)}")
+## 🚀 Features
 
-marks_array = np.array(marks)
+* Accepts marks for any number of students
+* Assigns grades based on score:
 
-print("\nMean:", np.mean(marks_array))
-print("Median:", np.median(marks_array))
-print("Maximum:", np.max(marks_array))
-print("Minimum:", np.min(marks_array))
-print("Standard Deviation:", np.std(marks_array))
+  * **A:** 85 and above
+  * **B:** 70–84
+  * **C:** 50–69
+  * **F:** Below 50
+* Calculates:
 
-average = np.mean(marks_array)
-print("\nStudents Above Average:", np.sum(marks_array > average))
+  * Mean
+  * Median
+  * Maximum Score
+  * Minimum Score
+  * Standard Deviation
+* Counts students scoring above the class average
+* Displays all A-grade students using NumPy Boolean Indexing
+* Bonus feature to add 5 more students and re-analyze the data
+* Shows the most common grade category
 
-print("\nA Grade Students:")
-print(marks_array[marks_array >= 85])
+## 🛠️ Technologies Used
 
-# Bonus
-new_scores = [80, 95, 60, 74, 50]
-marks.extend(new_scores)
+* Python 3
+* NumPy
 
-marks_array = np.array(marks)
+## 📂 Project Structure
 
-grades = [grade(score) for score in marks]
+```text
+assignment-1/
+│── student_score_analyzer.py
+│── README.md
+```
 
-count = {}
-for g in grades:
-    count[g] = count.get(g, 0) + 1
+## ▶️ How to Run
 
-print("\nGrade Counts:", count)
-print("Most Common Grade:", max(count, key=count.get))
+1. Install NumPy:
+
+```bash
+pip install numpy
+```
+
+2. Run the program:
+
+```bash
+python student_score_analyzer.py
+```
+
+3. Enter the number of students and their marks when prompted.
+
+## 📖 Learning Outcomes
+
+* Python Lists
+* Functions
+* Conditional Statements
+* Loops
+* User Input
+* NumPy Arrays
+* Statistical Analysis
+* Boolean Masking
+
+## 👨‍💻 Author
+
+Developed as part of the **MINDS INVASION AI Internship**.
