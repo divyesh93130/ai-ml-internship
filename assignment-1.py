@@ -1,3 +1,8 @@
+# This program analyzes student marks using Python and NumPy.
+# It assigns grades, calculates statistics (mean, median, max, min, and standard deviation),
+# and identifies students who scored above average and those with an A grade.
+# This program stores student marks and assigns grades based on their scores.
+# It uses NumPy to calculate statistics and analyze student performance efficiently.
 import numpy as np
 
 # Store student marks
