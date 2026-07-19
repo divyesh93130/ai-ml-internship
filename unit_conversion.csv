@@ -1,0 +1,15 @@
+unit,grams_equivalent,notes
+gram,1,base unit
+grams,1,base unit
+g,1,base unit
+kg,1000,kilogram
+ml,1,approx 1g for water-like liquids
+liter,1000,liquid
+katori,150,standard small bowl used for dal/curry
+bowl,200,medium bowl
+medium bowl,200,same as bowl
+plate,300,generic full plate
+cup,240,standard measuring cup
+piece,40,generic single piece fallback (overridden per food if known)
+slice,30,bread/roti slice fallback
+glass,250,liquids like milk

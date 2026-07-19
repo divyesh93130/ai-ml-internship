@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Nutrition Analyzer</title>
+<style>
+  :root {
+    --ink: #1f2a24;
+    --paper: #f6f4ee;
+    --leaf: #3f6b4f;
+    --leaf-dark: #2c4d38;
+    --clay: #b5673a;
+    --line: #d9d4c4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80') center/cover fixed;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.22), rgba(255,255,255,0.35) 35%, rgba(255,255,255,0.45) 70%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .card {
+    width: 100%;
+    max-width: 560px;
+    padding: 32px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.98);
+    box-shadow: 0 28px 80px rgba(31, 42, 36, 0.14);
+    border: 1px solid rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    position: relative;
+    overflow: hidden;
+  }
+  .food-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: rgba(76, 125, 88, 0.12);
+    color: var(--leaf-dark);
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .food-tag::before {
+    content: '🥗';
+    display: inline-block;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(99, 152, 108, 0.1), transparent 60%);
+    pointer-events: none;
+  }
+  h1 {
+    font-size: 34px;
+    margin: 0 0 8px;
+    letter-spacing: -0.04em;
+  }
+  .sub {
+    color: #5e574a;
+    margin: 0 0 30px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b6355;
+    margin-bottom: 8px;
+  }
+  .field { flex: 1; min-width: 140px; }
+  input, select {
+    width: 100%;
+    padding: 14px 14px;
+    border: 1px solid rgba(152, 146, 138, 0.25);
+    border-radius: 14px;
+    background: #fff;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--leaf);
+    box-shadow: 0 0 0 4px rgba(63, 107, 79, 0.12);
+  }
+  button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 12px;
+    background: linear-gradient(135deg, var(--leaf), #4f7b5c);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 24px rgba(31, 42, 36, 0.16);
+  }
+  button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  #result { margin-top: 30px; }
+  .matched {
+    font-size: 13px;
+    color: #78756c;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .matched b { color: var(--ink); }
+  .confidence {
+    display: inline-block;
+    background: var(--leaf);
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-left: 8px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .nutrient {
+    background: #fff;
+    border: 1px solid rgba(31, 42, 36, 0.06);
+    border-radius: 18px;
+    padding: 18px 16px;
+    box-shadow: 0 10px 24px rgba(31, 42, 36, 0.06);
+  }
+  .nutrient .val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--leaf-dark);
+  }
+  .nutrient .lbl {
+    font-size: 12px;
+    color: #6b6355;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+    display: block;
+  }
+  .error {
+    background: #fdf0ef;
+    border: 1px solid #e8c9c1;
+    color: #7a3a1e;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+  .alts {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #6b6355;
+    line-height: 1.6;
+  }
+  .page { width: 100%; max-width: 560px; }
+  .hidden { display: none; }
+  .warning {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff4e8;
+    border: 1px solid #f2c1a0;
+    color: #6b400e;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .result-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .result-header h2 {
+    font-size: 28px;
+    margin: 0;
+  }
+  .result-header p {
+    margin: 0;
+    color: #5e574a;
+    line-height: 1.5;
+  }
+  .secondary-button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 18px;
+    background: transparent;
+    color: var(--leaf-dark);
+    border: 1px solid rgba(63, 107, 79, 0.35);
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .secondary-button:hover {
+    background: rgba(76, 125, 88, 0.08);
+    border-color: rgba(63, 107, 79, 0.55);
+  }
+</style>
+</head>
+<body>
+<div class="page page-home">
+  <div class="card">
+    <div class="food-tag">Fresh food insights</div>
+    <h1>What did you eat?</h1>
+    <p class="sub">Type the food and how much of it — spelling and casual units are fine.</p>
+    <div id="apiWarning" class="warning hidden"></div>
+
+  <div class="row">
+    <div class="field">
+      <label for="foodName">Food name</label>
+      <input id="foodName" type="text" placeholder="e.g. Panner Butter Masala" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="quantity">Quantity</label>
+      <input id="quantity" type="number" min="0" step="any" placeholder="0" />
+    </div>
+    <div class="field">
+      <label for="unit">Unit</label>
+      <select id="unit">
+         <option value="select Quantity">select Quantity</option>
+        <option value="grams">grams</option>
+        <option value="kg">kg</option>
+        <option value="katori">katori</option>
+        <option value="bowl">bowl</option>
+        <option value="plate">plate</option>
+        <option value="cup">cup</option>
+        <option value="piece">piece</option>
+        <option value="glass">glass</option>
+        <option value="ml">ml</option>
+        <option value="liter">liter</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="analyzeBtn">Analyze nutrition</button>
+
+  <div id="result"></div>
+</div>
+</div>
+
+<div class="page page-result hidden">
+  <div class="card">
+    <div class="result-header">
+      <h2 id="resultTitle">Nutrition details</h2>
+      <p id="resultSubtitle">Your food details appear below.</p>
+    </div>
+
+    <div id="resultBody"></div>
+    <button class="secondary-button" id="backBtn">Analyze another food</button>
+  </div>
+</div>
+
+<script>
+  const BACKEND_CANDIDATES = [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+  ];
+  let BACKEND_BASE_URL = BACKEND_CANDIDATES[0];
+  let API_URL = `${BACKEND_BASE_URL}/analyze`;
+  let HEALTH_URL = `${BACKEND_BASE_URL}/health`;
+  let backendReady = false;
+
+  const homePage = document.querySelector('.page-home');
+  const resultPage = document.querySelector('.page-result');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultSubtitle = document.getElementById('resultSubtitle');
+  const resultBody = document.getElementById('resultBody');
+  const apiWarning = document.getElementById('apiWarning');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+
+  const RETRY_INTERVAL_MS = 2500;
+  const WARNING_DELAY_MS = 4000;
+  let backendRetryTimer = null;
+  let warningTimer = null;
+
+  async function checkHealth(url) {
+    try {
+      const res = await fetch(`${url}/health`, { cache: 'no-store' });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  async function resolveBackend() {
+    for (const url of BACKEND_CANDIDATES) {
+      if (await checkHealth(url)) {
+        return url;
+      }
+    }
+    return null;
+  }
+
+  function setBackendUrl(url) {
+    BACKEND_BASE_URL = url;
+    API_URL = `${BACKEND_BASE_URL}/analyze`;
+    HEALTH_URL = `${BACKEND_BASE_URL}/health`;
+  }
+
+  function setAnalyseButtonState(enabled) {
+    analyzeBtn.disabled = !enabled;
+    analyzeBtn.textContent = enabled ? 'Analyze nutrition' : 'Waiting for backend...';
+  }
+
+  function scheduleBackendWarning() {
+    if (warningTimer) return;
+    warningTimer = setTimeout(() => {
+      apiWarning.innerHTML = `Cannot reach backend at <strong>${BACKEND_BASE_URL}</strong>.<br/>` +
+        `Open the app at <strong>${BACKEND_BASE_URL}</strong> and start the backend first. ` +
+        `Do not open the page with VS Code Live Server or file:// directly. ` +
+        `Start the backend from the <code>backend</code> folder with <code>start.bat</code> or ` +
+        `<code>uvicorn main:app --reload</code>.`;
+      apiWarning.classList.remove('hidden');
+      warningTimer = null;
+    }, WARNING_DELAY_MS);
+  }
+
+  function clearBackendWarning() {
+    if (warningTimer) {
+      clearTimeout(warningTimer);
+      warningTimer = null;
+    }
+    apiWarning.classList.add('hidden');
+  }
+
+  function showBackendWarning() {
+    apiWarning.innerHTML = `Cannot reach backend at <strong>${BACKEND_BASE_URL}</strong>.<br/>` +
+      `Open the app at <strong>${BACKEND_BASE_URL}</strong> and start the backend first. ` +
+      `Do not open the page with VS Code Live Server or file:// directly. ` +
+      `Start the backend from the <code>backend</code> folder with <code>start.bat</code> or ` +
+      `<code>uvicorn main:app --reload</code>.`;
+    apiWarning.classList.remove('hidden');
+  }
+
+  function clearBackendRetry() {
+    if (backendRetryTimer) {
+      clearInterval(backendRetryTimer);
+      backendRetryTimer = null;
+    }
+  }
+
+  async function redirectIfBackendAvailable() {
+    if (window.location.origin === BACKEND_BASE_URL || window.location.origin === `http://localhost:5500` || window.location.origin === `http://127.0.0.1:8000` || window.location.origin === `http://localhost:8000`) {
+      return false;
+    }
+
+    if (await checkHealth(BACKEND_BASE_URL)) {
+      window.location.href = BACKEND_BASE_URL;
+      return true;
+    }
+    return false;
+  }
+
+  async function pingApi() {
+    const backendUrl = await resolveBackend();
+    if (backendUrl) {
+      setBackendUrl(backendUrl);
+      backendReady = true;
+      clearBackendWarning();
+      setAnalyseButtonState(true);
+      clearBackendRetry();
+      return true;
+    }
+
+    backendReady = false;
+    setAnalyseButtonState(false);
+    scheduleBackendWarning();
+
+    if (!backendRetryTimer) {
+      backendRetryTimer = setInterval(async () => {
+        if (await pingApi()) {
+          clearBackendRetry();
+        }
+      }, RETRY_INTERVAL_MS);
+    }
+
+    return false;
+  }
+
+  redirectIfBackendAvailable().then(() => pingApi());
+  window.addEventListener('focus', () => {
+    redirectIfBackendAvailable().then(() => pingApi());
+  });
+
+  function showPage(pageToShow) {
+    homePage.classList.toggle('hidden', pageToShow !== homePage);
+    resultPage.classList.toggle('hidden', pageToShow !== resultPage);
+  }
+
+  document.getElementById("analyzeBtn").addEventListener("click", async () => {
+    const food_name = document.getElementById("foodName").value.trim();
+    const quantity = parseFloat(document.getElementById("quantity").value);
+    const unit = document.getElementById("unit").value;
+    const resultEl = document.getElementById("result");
+    const btn = document.getElementById("analyzeBtn");
+
+    if (!backendReady) {
+      await pingApi();
+      if (!backendReady) {
+        resultEl.innerHTML = `<div class="error">Backend is not available yet. Please start the backend and reload the page.</div>`;
+        return;
+      }
+    }
+
+    if (!food_name || !quantity) {
+      resultEl.innerHTML = `<div class="error">Enter a food name and a quantity greater than 0.</div>`;
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Analyzing...";
+    resultEl.innerHTML = "";
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ food_name, quantity, unit }),
+      });
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(text || 'Invalid JSON response from API');
+      }
+
+      if (!res.ok) {
+        resultEl.innerHTML = `<div class="error">${data.detail || 'API error occurred.'}</div>`;
+        return;
+      }
+
+      const n = data.nutrition;
+      resultTitle.textContent = `Nutrition for ${food_name}`;
+      resultSubtitle.textContent = `Matched to ${data.matched_food} for ${n.quantity_grams}g (${data.confidence}% match).`;
+
+      resultBody.innerHTML = `
+        <div class="grid">
+          <div class="nutrient"><div class="val">${n.calories_kcal}</div><div class="lbl">Calories (kcal)</div></div>
+          <div class="nutrient"><div class="val">${n.protein_g}g</div><div class="lbl">Protein</div></div>
+          <div class="nutrient"><div class="val">${n.carbs_g}g</div><div class="lbl">Carbohydrates</div></div>
+          <div class="nutrient"><div class="val">${n.fat_g}g</div><div class="lbl">Fat</div></div>
+          <div class="nutrient"><div class="val">${n.fiber_g}g</div><div class="lbl">Fiber</div></div>
+          <div class="nutrient"><div class="val">${n.sodium_mg}mg</div><div class="lbl">Sodium</div></div>
+        </div>
+        ${data.alternative_matches.length ? `
+          <div class="alts">Other possible matches: ${data.alternative_matches.map(m => `${m.food_name} (${m.confidence}%)`).join(", ")}</div>
+        ` : ""}
+      `;
+
+      showPage(resultPage);
+    } catch (err) {
+      resultEl.innerHTML = `<div class="error">Could not reach the API at ${API_URL}. Error: ${err.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Analyze nutrition";
+    }
+  });
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    showPage(homePage);
+    resultBody.innerHTML = "";
+    document.getElementById('result').innerHTML = "";
+  });
+</script>
+</body>
+</html>

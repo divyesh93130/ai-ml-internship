@@ -1,0 +1,75 @@
+.card {
+  width: 100%;
+  max-width: 560px;
+}
+
+h1 {
+  font-size: 28px;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+
+.sub {
+  color: #6b6355;
+  margin: 0 0 32px;
+  font-size: 14px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b6355;
+  margin-bottom: 6px;
+}
+
+.field { flex: 1; }
+
+input, select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 15px;
+  color: var(--ink);
+  box-sizing: border-box;
+}
+
+input:focus, select:focus {
+  outline: 2px solid var(--leaf);
+  outline-offset: 1px;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  background: var(--leaf);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover { background: var(--leaf-dark); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.error {
+  margin-top: 14px;
+  background: #fbe9e3;
+  border: 1px solid var(--clay);
+  color: #7a3a1e;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}

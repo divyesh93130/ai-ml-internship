@@ -1,0 +1,23 @@
+:root {
+  --ink: #1f2a24;
+  --paper: #f6f4ee;
+  --leaf: #3f6b4f;
+  --leaf-dark: #2c4d38;
+  --clay: #b5673a;
+  --line: #d9d4c4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px;
+}

@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+
+    {
+      "name": "Run Nutrition Analyzer Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "cmd.exe",
+      "args": ["/k", "${workspaceFolder}\\start.bat"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Open Nutrition Analyzer in Browser",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:5500",
+      "webRoot": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Nutrition Analyzer + Browser",
+      "configurations": [
+        "Run Nutrition Analyzer Server",
+        "Open Nutrition Analyzer in Browser"
+      ]
+    }
+  ]
+}

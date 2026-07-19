@@ -1,0 +1,51 @@
+.results { margin-top: 28px; }
+
+.matched {
+  font-size: 13px;
+  color: #6b6355;
+  margin-bottom: 14px;
+}
+
+.matched b { color: var(--ink); }
+
+.confidence {
+  display: inline-block;
+  background: var(--leaf);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.nutrient {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.nutrient .val {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--leaf-dark);
+}
+
+.nutrient .lbl {
+  font-size: 12px;
+  color: #6b6355;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alts {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #6b6355;
+}
